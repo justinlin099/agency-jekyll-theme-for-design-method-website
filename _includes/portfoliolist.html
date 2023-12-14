@@ -1,0 +1,49 @@
+<!-- 另一个页面的HTML代码 -->
+<style>
+    .like-list {
+      list-style-type: none;
+      padding: 0;
+    }
+  
+    .like-list li {
+      margin-bottom: 10px;
+    }
+  </style>
+  
+  <h2>我的收藏</h2>
+  <ul class="like-list" id="likeList"></ul>
+  
+  <script>
+    // 获取储存在本地存储中的按钮点击状态数组
+    let savedButtons = JSON.parse(localStorage.getItem('clickedButtons')) || [];
+  
+    // 获取包含portfolio的容器元素
+    const portfolioContainer = document.getElementById('likeList');
+  
+    // 循环遍历按钮点击状态数组，并生成相应的HTML元素
+    savedButtons.forEach(function(buttonIndex) {
+      // 创建列表项元素
+      const listItem = document.createElement('li');
+  
+      // 获取对应的portfolio数据
+      const portfolioData = site.portfolio.find(function(project, index) {
+        return (index + 1) === parseInt(buttonIndex);
+      });
+  
+      // 检查portfolio数据是否存在
+      if (portfolioData) {
+        // 创建包含portfolio信息的HTML内容
+        const portfolioInfo = `
+          <h4>${portfolioData.caption.title}</h4>
+          <p class="text-muted">${portfolioData.caption.subtitle}</p>
+        `;
+  
+        // 将HTML内容插入列表项元素
+        listItem.innerHTML = portfolioInfo;
+  
+        // 将列表项元素添加到容器元素中
+        portfolioContainer.appendChild(listItem);
+      }
+    });
+  </script>
+  

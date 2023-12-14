@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .heart-button {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin: 5px;
+      cursor: pointer;
+      background-image: url('heart_default.png'); /* 未点击状态的背景图片 */
+    }
+
+    .heart-button.clicked {
+      background-image: url('heart_clicked.png'); /* 点击后的背景图片 */
+    }
+  </style>
+</head>
+<body>
+  <div id="buttons-container"></div>
+
+  <script>
+    // 获取储存在本地存储中的按钮点击状态数组
+    let savedButtons = JSON.parse(localStorage.getItem('clickedButtons')) || [];
+
+    // 定义按钮的数量
+    const buttonCount = 10;
+
+    // 生成按钮并添加到容器中
+    const buttonsContainer = document.getElementById('buttons-container');
+    for (let i = 1; i <= buttonCount; i++) {
+      const button = document.createElement('div');
+      button.classList.add('heart-button');
+
+      // 检查该按钮是否在点击状态数组中，并设置其初始背景图片
+      if (savedButtons.includes(i.toString())) {
+        button.classList.add('clicked');
+      }
+
+      // 添加点击事件处理程序
+      button.addEventListener('click', function() {
+        // 切换按钮的点击状态
+        const index = savedButtons.indexOf(i.toString());
+        if (index > -1) {
+          savedButtons.splice(index, 1);
+        } else {
+          savedButtons.push(i.toString());
+        }
+
+        // 存储按钮点击状态数组到本地存储
+        localStorage.setItem('clickedButtons', JSON.stringify(savedButtons));
+
+        // 更新按钮的样式
+        updateButtonStyles();
+      });
+
+      buttonsContainer.appendChild(button);
+    }
+
+    // 更新按钮的样式
+    function updateButtonStyles() {
+      const allButtons = document.getElementsByClassName('heart-button');
+      for (let j = 0; j < allButtons.length; j++) {
+        const button = allButtons[j];
+        const buttonIndex = j + 1;
+
+        if (savedButtons.includes(buttonIndex.toString())) {
+          button.classList.add('clicked');
+        } else {
+          button.classList.remove('clicked');
+        }
+      }
+    }
+
+    // 页面加载时更新按钮的样式
+    updateButtonStyles();
+  </script>
+</body>
+</html>

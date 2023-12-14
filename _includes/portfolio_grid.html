@@ -1,0 +1,173 @@
+<!-- Portfolio Grid -->
+<style>
+  
+  
+  .sidebar {
+      border-left: 5px solid orange;
+      padding-left: 20px;
+      padding-right: 10px;
+  }
+
+  .sidebar a {
+      display: block;
+      margin-top: 10px;
+  }
+
+  .portfolio-like {
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+  }
+
+  .like-button {
+      width: 50px;
+      height: 50px;
+      background-image: url('https://github.com/justinlin099/Design-Method-Website/assets/61717681/fcea3cdb-f582-4401-b6c2-30e11e4c7cae'); /* 未点击状态的背景图片 */
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin-left: 10px;
+      cursor: pointer;
+      position: absolute;
+      bottom: 45px;
+      right: 45px;
+      z-index: 1;
+  }
+
+  .like-button.clicked {
+      background-image: url('https://github.com/justinlin099/Design-Method-Website/assets/61717681/29acd40e-2df0-4652-9412-e9c258f8320e'); /* 点击后的背景图片 */
+  }
+</style>
+
+<br>
+<br>
+
+
+
+{% if site.locale and site.locale != "" and site.locale != nil %}
+<section class="bg-light page-section" id="{{ site.data.sitetext.portfolio.section | default: "portfolio" }}">
+  <div class="container">
+    <div class="row">
+      <div style="display: flex; align-items: center;">
+        <div class="sidebar" style="max-width:100%;height:auto;">
+            <br>
+            <h1>方法總覽</h1>
+            <h6>設計方法百百種，我們從當中找出25種方法，提供案例與講解，讓設計師更快速找到自己需要的、適合自己的設計方法</h6>
+            <br>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <br>
+      <br>
+      <br>
+      <br>
+	{% for project in site.portfolio %}
+      <div class="col-md-4 col-sm-6 row-md-4 row-sm-6 portfolio-item">
+        <a class="portfolio-link" data-toggle="modal" href="#p{{ forloop.index }}">
+          <div class="portfolio-hover">
+            <div class="portfolio-hover-content">
+              <i class="{{ site.data.style.portfolio-icon | default: "fas fa-plus fa-3x" }}"></i>
+            </div>
+          </div>
+          <img class="img-fluid" src="{{ project.caption.thumbnail }}" alt="">
+        </a>
+        
+        <div class="portfolio-caption">
+          <p class="text-muted">{{ project.caption.subtitle }}</p>
+          <div class="portfolio-like">
+            <div class="like-button"></div>
+          </div>
+        </div>
+      </div>
+	{% endfor %}
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="bg-light page-section" id="{{ site.data.sitetext.portfolio.section | default: "portfolio" }}">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <h2 class="section-heading text-uppercase">{{ site.data.sitetext.portfolio.title | markdownify | default: "Portfolio" }}</h2>
+        <h3 class="section-subheading text-muted">{{ site.data.sitetext.portfolio.text | markdownify }}</h3>
+      </div>
+    </div>
+    <div class="row">
+	{% for project in site.portfolio %}
+      <div class="col-md-4 col-sm-6 portfolio-item">
+        <a class="portfolio-link" data-toggle="modal" href="#p{{ forloop.index }}">
+          <div class="portfolio-hover">
+            <div class="portfolio-hover-content">
+              <i class="{{ site.data.style.portfolio-icon | default: "fas fa-plus fa-3x" }}"></i>
+            </div>
+          </div>
+          <img class="img-fluid" src="{{ project.caption.thumbnail }}" alt="">
+        </a>
+        <div class="portfolio-caption">
+          <h4>{{ project.caption.title }}</h4>
+          <p class="text-muted">{{ project.caption.subtitle }}</p>
+          <div class="portfolio-like">
+            <div class="like-button"></div>
+          </div>
+        </div>
+      </div>
+	{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% include modals.html %}
+
+<script>
+  // 获取储存在本地存储中的按钮点击状态数组
+  let savedButtons = JSON.parse(localStorage.getItem('clickedButtons')) || [];
+
+  // 获取所有的like按钮
+  const likeButtons = document.getElementsByClassName('like-button');
+
+  // 设置初始按钮样式
+  for (let i = 0; i < likeButtons.length; i++) {
+    const button = likeButtons[i];
+    const buttonIndex = i + 1;
+
+    // 检查该按钮是否在点击状态数组中，并设置其初始背景图片
+    if (savedButtons.includes(buttonIndex.toString())) {
+      button.classList.add('clicked');
+    }
+
+    // 添加点击事件处理程序
+    button.addEventListener('click', function() {
+      // 切换按钮的点击状态
+      const index = savedButtons.indexOf(buttonIndex.toString());
+      if (index > -1) {
+        savedButtons.splice(index, 1);
+      } else {
+        savedButtons.push(buttonIndex.toString());
+      }
+
+      // 存储按钮点击状态数组到本地存储
+      localStorage.setItem('clickedButtons', JSON.stringify(savedButtons));
+
+      // 更新按钮的样式
+      updateButtonStyles();
+    });
+  }
+
+  // 更新按钮的样式
+  function updateButtonStyles() {
+    for (let j = 0; j < likeButtons.length; j++) {
+      const button = likeButtons[j];
+      const buttonIndex = j + 1;
+
+      if (savedButtons.includes(buttonIndex.toString())) {
+        button.classList.add('clicked');
+      } else {
+        button.classList.remove('clicked');
+      }
+    }
+  }
+
+  // 页面加载时更新按钮的样式
+  updateButtonStyles();
+</script>
